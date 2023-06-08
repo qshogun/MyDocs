@@ -1,0 +1,46 @@
+﻿@page "/family-members"
+
+@using MyDocs.Models.DTOs
+@inject HttpClient Http
+
+<h3>Family Members</h3>
+
+@if (Members == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Relationship</th>
+                <!-- Other columns -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var familyMember in Members)
+            {
+                <tr>
+                    <td>@familyMember.FamilyMemberId</td>
+                    <td>@familyMember.FirstName</td>
+                    <td>@familyMember.Gender</td>
+                    <td>@familyMember.Relationship</td>
+                    <!-- Other columns -->
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<FamilyMemberDTO> Members { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Members = await Http.GetFromJsonAsync<List<FamilyMemberDTO>>("https://localhost:7045/api/familymembers");
+    }
+}

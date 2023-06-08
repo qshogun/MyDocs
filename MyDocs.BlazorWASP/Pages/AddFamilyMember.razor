@@ -1,0 +1,67 @@
+﻿@page "/add-family-member"
+
+@using System.Net.Http
+@using MyDocs.Models.DTOs;
+@inject HttpClient Http
+
+<h3>Add Family Member</h3>
+
+<EditForm Model="@familyMember" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <InputText id="firstName" @bind-Value="@familyMember.FirstName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <InputText id="lastName" @bind-Value="@familyMember.LastName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="dateOfBirth">Date of Birth:</label>
+        <InputDate id="dateOfBirth" @bind-Value="@familyMember.DateOfBirth" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="gender">Gender:</label>
+        <InputSelect id="gender" @bind-Value="@familyMember.Gender" class="form-control">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </InputSelect>
+    </div>
+
+    <div class="form-group">
+        <label for="relationship">Relationship:</label>
+        <InputSelect id="relationship" @bind-Value="@familyMember.Relationship" class="form-control">
+            <option value="Self">Self</option>
+            <option value="Spouse">Spouse</option>
+            <option value="Child">Child</option>
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Family Member</button>
+</EditForm>
+
+@if (isSubmitted)
+{
+    <div class="alert alert-success mt-3">
+        Family member added successfully!
+    </div>
+}
+
+@code {
+    private FamilyMemberCreateDTO familyMember = new FamilyMemberCreateDTO();
+    private bool isSubmitted = false;
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PostAsJsonAsync("api/familymembers", familyMember);
+        if (response.IsSuccessStatusCode)
+        {
+            familyMember = new FamilyMemberCreateDTO();
+            isSubmitted = true;
+        }
+    }
+}
